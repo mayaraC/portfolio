@@ -27,6 +27,29 @@ function connexion() {
     return $dbc;
   }
 
- 
+  function ajouterMedia($typeMedia , $nomMedia , $creationDate , $modificationDate) {
+
+    try {
+        //Requête
+        $sql = "INSERT INTO `media`(`typeMedia`, `nomMedia`, `creationDate`, `modificationDate`) VALUES ( :typeMedia, :nomMedia, :creationDate, :modificationDate)";
+
+        //Envoyer la requête à la base de données
+        $query = connexion()->prepare($sql);
+
+        // Exécuter la requete en donnant les infos
+        return $query->execute([
+                    ':typeMedia' => $typeMedia,
+                    ':nomMedia' => $nomMedia,
+                    ':creationDate' => date("Y-m-d"),
+                    ':modificationDate' => date("Y-m-d"),
+        ]);
+    } catch (Exception $ex) {
+        if ($ex->getCode() == 23000)
+            return FALSE;
+        echo $ex->getMessage();
+        return FALSE;
+    }
+    return TRUE;
+}
 ?>
  

@@ -1,7 +1,16 @@
 <?php include'php/connexion.php';
 include 'php/upload.php';
 
-echo "select id * from media";
+$uploads_dir = '/var/www/html/image';
+foreach ($_FILES["pictures"]["error"] as $key => $error) {
+    if ($error == UPLOAD_ERR_OK) {
+        $tmp_name = $_FILES["pictures"]["tmp_name"][$key];
+        // basename() peut empêcher les attaques de système de fichiers;
+        // la validation/assainissement supplémentaire du nom de fichier peut être approprié
+        $name = basename($_FILES["pictures"]["name"][$key]);
+        move_uploaded_file($tmp_name, "$uploads_dir/$name");
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +27,7 @@ echo "select id * from media";
     <form method="POST" action="">
         <div class="wrapper">
             <div class="row row-offcanvas row-offcanvas-left">
-                <?php include '../social/assets/include/nav.html'; ?>
+               
 
                 <div id="main">
                     <div  class="container bootstrap snippet">
@@ -35,11 +44,11 @@ echo "select id * from media";
                                             <textarea class="form-control" placeholder="What's in your mind?"></textarea>
                                             <ul class='list-inline post-actions'>
                                                 <li><label for="img"> <img src="./assets/icon/iconmonstr-photo-camera-4.svg" alt="icon camera"> </label> 
-                                                <input type="file" accept="image/*" name="img" id="img" multiple></li>
+                                                <input type="file" accept="image/*" name="pictures" id="img" multiple></li>
                                                 <li><a href="#" class='glyphicon glyphicon-user'></a></li>
                                                 <li><a href="#" class='glyphicon glyphicon-map-marker'></a></li>
 
-                                                <li class='pull-right'><a href="#" class='btn btn-primary btn-xs'>Post</a></li>
+                                                <li class='pull-right'><input class='btn btn-primary btn-xs' type="submit" name="post" value="Post"></li>
                                             </ul>
                                         </form>
                                     </div>
