@@ -1,12 +1,9 @@
-<?php include'php/connexion.php' ;
+<?php 
+include'php/upload.php' ;
 
 session_start();
 
-
-//$fichier = basename($_FILES['img']['name']);
 print_r($_FILES['img']);
-//$path = $_FILES['img']['name'];
-//$extension = pathinfo($path, PATHINFO_EXTENSION);
 
 if(isset($_POST['post'])== 'post'){
 
@@ -17,14 +14,13 @@ foreach ($_FILES['img']['name'] as $key => $value) {
 
     if ($extension == "png" or $extension == "PNG" or $extension == "jpg") {
         $newName = uniqid().".".$extension;
-        $dossier = "img/" . $newName;
+        $dossier = "media/images/" . $newName;
     
         if (move_uploaded_file($_FILES['img']['tmp_name'][$key], $dossier . "")) {//Si la fonction renvoie TRUE, c'est que ça a fonctionné...
             echo 'Upload effectué avec succès !';
             ajouterMedia($extension, $newName);
             
-            //header('Location: ../index.php');
-            echo"au top";
+            header('Location: index.php');
             //exit;
         } else { //Sinon (la fonction renvoie FALSE).
             echo 'Echec de l\'upload !</br';
@@ -37,26 +33,6 @@ foreach ($_FILES['img']['name'] as $key => $value) {
 }else 
  echo "voifdho";
 
-/*
-if ($extension == "png" or $extension == "PNG" or $extension == "jpg") {
-    $newName = uniqid().".".$extension;
-    $dossier = "img/" . $newName;
-
-    if (move_uploaded_file($_FILES['img']['tmp_name'], $dossier . "")) {//Si la fonction renvoie TRUE, c'est que ça a fonctionné...
-        echo 'Upload effectué avec succès !';
-        ajouterMedia($extension, $newName);
-        
-        //header('Location: ../index.php');
-        echo"au top";
-        exit;
-    } else { //Sinon (la fonction renvoie FALSE).
-        echo 'Echec de l\'upload !</br';
-        //header('Location: ../ajoutJeu.php?erreur=19');
-        echo"fuck";
-        exit;
-    }
-}
-*/
 
 ?>
 <!DOCTYPE html>
@@ -100,20 +76,6 @@ if ($extension == "png" or $extension == "PNG" or $extension == "jpg") {
                                     </div>
                                 </div>
                             </div>
-
-                            <?php 
-                            $arrayImg = afficherImages();
-                            foreach ($arrayImg as  $var) {
-
-                                echo'<div class="panel panel-default" style=" width:500px; height:300px; text-align: center" >
-                                    <div class="panel-thumbnail"><img src="img/'. $var['nomMedia'] . '"class="img-responsive" style=" width:auto; height:auto"></div>
-                                    <div class="panel-body">
-                                        <p class="lead">Social Good</p>
-                                        <p>1,200 Followers, 83 Posts</p>
-                                    </div>
-                                </div>';
-                            }
-                                ?>
                         </div>
                     </div>
                 </div>

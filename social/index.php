@@ -1,3 +1,7 @@
+<?php 
+include 'php/upload.php' ;
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -118,6 +122,19 @@
                                         </p>
                                     </div>
                                 </div>
+                                <?php 
+                            $arrayImg = afficherImages();
+                            foreach ($arrayImg as  $var) {
+
+                                echo'<div class="panel panel-default" style=" width:500px; height:300px; text-align: center" >
+                                    <div class="panel-thumbnail"><img src="media/images/'. $var['nomMedia'] . '"class="img-responsive" style=" width:auto; height:auto"></div>
+                                    <div class="panel-body">
+                                        <p class="lead">Social Good</p>
+                                        <p>1,200 Followers, 83 Posts</p>
+                                    </div>
+                                </div>';
+                            }
+                                ?>
 
                             </div>
                         </div><!--/row-->
