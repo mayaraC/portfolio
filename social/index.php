@@ -108,27 +108,31 @@ session_start();
                                         <H1>WELCOME</H1>
                                     </div>
                                 </div>
+                                <?php 
+                            $arrayComt = afficherCommentaire();
+                                foreach ($arrayComt as $commentaire){
 
-                                <div class="panel panel-default">
-                                    <div class="panel-thumbnail"><img src="assets/img/bg_4.jpg" class="img-responsive"></div>
+                                echo'<div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
+                                    <div class="panel-thumbnail"></div>
                                     <div class="panel-body">
-                                        <p class="lead">Social Good</p>
+                                        <p class="lead">'. $commentaire['commentaire'] . '</p>
                                         <p>1,200 Followers, 83 Posts</p>
-
-                                        <p>
-                                            <img src="assets/img/photo.jpg" height="28px" width="28px">
-                                            <img src="assets/img/photo.png" height="28px" width="28px">
-                                            <img src="assets/img/photo_002.jpg" height="28px" width="28px">
-                                        </p>
                                     </div>
-                                </div>
+                                </div>';
+                            } 
+                                ?>
+                                
                                 <?php 
                             $arrayImg = afficherImages();
                             foreach ($arrayImg as  $var) {
 
-                                echo'<div class="panel panel-default" style=" width:500px; height:300px; text-align: center" >
+                                echo'<div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
                                     <div class="panel-thumbnail"><img src="media/images/'. $var['nomMedia'] . '"class="img-responsive" style=" width:auto; height:auto"></div>
                                     <div class="panel-body">
+                                    <button type="submit" class="btn btn-default btn-sm">
+          <span class="glyphicon glyphicon-trash"></span>  
+        </button>
+                                    
                                         <p class="lead">Social Good</p>
                                         <p>1,200 Followers, 83 Posts</p>
                                     </div>
