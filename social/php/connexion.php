@@ -1,8 +1,8 @@
 <?php
-define("HOST", "192.168.0.12");
+define("HOST", "localhost");
 define("DBNAME", "portefolio_db");
-define("DBUSER", "cfpt");
-define("DBPWD", "Super");
+define("DBUSER", "root");
+define("DBPWD", "root");
 
 function connexion() {
     static $dbc = null;
