@@ -1,6 +1,7 @@
 <?php
 include 'php/upload.php';
 session_start();
+$typeFichier = $_SESSION['typeFichier'];
 
 $idCommentaire = filter_input(INPUT_POST, 'idCommentaire', FILTER_SANITIZE_STRING);
 
@@ -93,6 +94,7 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
                             }
                             $img = afficherImagesEtCommentaire();
                             foreach ($img as $var) {
+                                if ($typeFichier == "image"){
                                 echo '<form method="POST" action="#" > <div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
                                     <div class="panel-thumbnail"><img src="media/images/' . $var['nomMedia'] . '"class="img-responsive" style=" width:auto; height:auto"></div>
                                     <div class="panel-body"> 
@@ -102,6 +104,14 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
                                     </div>
                                 </div></form>';
                             }
+                            if ($typeFichier == "video"){
+                                echo '<form method="POST" action="#" > <div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
+                                <video controls width="250">
+                                <source src="media/videos/'. $var['nomMedia'] .'" type="video/mp4">
+                                </video>    
+                                </form>';
+                            }
+                        }
                             ?>
 
                         </div>
