@@ -93,9 +93,7 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
                             }
                             $img = afficherImagesEtCommentaire();
                             foreach ($img as $var) {
-
-                                echo'
-                                <form method="POST" action="#" > <div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
+                                echo '<form method="POST" action="#" > <div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
                                     <div class="panel-thumbnail"><img src="media/images/' . $var['nomMedia'] . '"class="img-responsive" style=" width:auto; height:auto"></div>
                                     <div class="panel-body"> 
                                     <input type="submit" name="supprimer" value="Supprimer">

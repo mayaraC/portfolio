@@ -65,7 +65,7 @@ function afficherImagesOuCommentaire() {
 
 //Supprimer des images et des commentaires --------------------------------------------------------------------------------------
 function effacerMediaCommenatire($id) {
-  Start();
+  //Start();
   //Requête
   $sql = "DELETE FROM `media` WHERE  Post_idPost = :id";
   
@@ -86,10 +86,10 @@ function effacerMediaCommenatire($id) {
 
     // Exécuter la requete en donnant les infos
     $query->bindparam(':id', $id, PDO::PARAM_INT);
-    Commit();
+    //Commit();
     return $query->execute() ;
  }
- RollBack();
+ //RollBack();
  return false;
 }
 //Transaction----------------
