@@ -22,27 +22,21 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
     <div class="wrapper">
         <div class="row row-offcanvas row-offcanvas-left">
             <?php //include '../social/assets/include/nav.html'; ?>
-            
             <div class="padding">
                 <div class="full col-sm-9">
-
                     <!-- content -->
                     <div class="row">
-
                         <!-- main col left -->
                         <div class="col-sm-5">
-
                             <div class="panel panel-default">
                                 <div class="panel-thumbnail"><img src="assets/img/bg_5.jpg" class="img-responsive"></div>
                                 <div class="panel-body">
                                     <p class="lead">Urbanization</p>
-
                                     <p>
                                         <img src="assets/img/uFp_tsTJboUY7kue5XAsGAs28.png" height="28px" width="28px">
                                     </p>
                                 </div>
                             </div>
-
                             <div class="panel panel-default">
                                 <div class="panel-heading"><a href="#" class="pull-right">View all</a>
                                     <h4>Bootstrap Examples</h4></div>
@@ -54,7 +48,6 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
                                     </div>
                                 </div>
                             </div>
-
                             <div class="panel panel-default">
                                 <div class="panel-heading"><a href="#" class="pull-right">View all</a>
                                     <h4>More Templates</h4></div>
@@ -71,7 +64,6 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
                                 </div>
                             </div>
                         </div>
-
                         <!-- main col right -->
                         <div class="col-sm-7">
                             <div class="panel panel-default">
@@ -82,52 +74,75 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
                             <?php
                             $arrayComt = afficherImagesOuCommentaire();
                             foreach ($arrayComt as $commentaire) {
-
                                 echo'<form method="POST" action="#" ><div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
                                   <div class="panel-thumbnail"></div>
                                   <div class="panel-body">
                                   <p class="lead">' . $commentaire['commentaire'] . '</p>
                                   <input type="submit" name="supprimer" value="Supprimer">
-                                  <input type="hidden" name="idCommentaire" value="'. $commentaire['idPost']. '">
+                                  <input type="hidden" name="idCommentaire" value="' . $commentaire['idPost'] . '">
                                   </div>
                                   </div></form>';
                             }
-
                             $img = afficherImagesEtCommentaire();
                             foreach ($img as $var) {
                                 $typeFichier = $var['typeMedia'];
-                                if ($typeFichier == "image"){
-                                    
-                                echo '<form method="POST" action="#" > <div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
-                                    <div class="panel-thumbnail"><img src="media/images/' . $var['nomMedia'] . '"class="img-responsive" style=" width:auto; height:auto"></div>
-                                    <div class="panel-body"> 
-                                    <input type="submit" name="supprimer" value="Supprimer">
-                                    <input type="hidden" name="idCommentaire" value="'. $var['Post_idPost']. '">
-                                        <p class="lead"> ' . $var['commentaire'] . '</p>
+                                if ($typeFichier == "image") {
+                                    echo '<form method="POST" action="#" > 
+                                    <div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
+                                        <div class="panel-thumbnail">
+                                            <img src="media/images/' . $var['nomMedia'] . '"class="img-responsive" style=" width:auto; height:auto">
+                                        </div>
+                                        <div class="panel-body"> 
+                                            <input type="submit" name="supprimer" value="Supprimer">
+                                            <input type="hidden" name="idCommentaire" value="' . $var['Post_idPost'] . '">
+                                            <p class="lead"> ' . $var['commentaire'] . '</p>
+                                        </div>
                                     </div>
-                                </div></form>';
-                            
-                            if ($typeFichier == "video"){
-                                echo '<form method="POST" action="#" > <div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
-                                <video controls width="250">
-                                <source src="media/videos/'. $var['nomMedia'] .'" type="video/mp4">
-                                </video>    
                                 </form>';
-                            }
-                        }
-                    }
-                            ?>
+                                }
 
+                                if ($typeFichier == "video") {
+                                    echo '<form method="POST" action="#" > 
+                                    <div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
+                                        <div class="panel-thumbnail">
+                                            <video controls width="250" autoplay="true" loop>
+                                                <source src="media/videos/' . $var['nomMedia'] . '" type="video/mp4">
+                                            </video> 
+                                        </div>
+                                        <div class="panel-body">   
+                                            <input type="submit" name="supprimer" value="Supprimer">  
+                                            <input type="hidden" name="idCommentaire" value="' . $var['Post_idPost'] . '">
+                                            <p class="lead"> ' . $var['commentaire'] . '</p>
+                                        </div>  
+                                    </div>     
+                                    </form>';
+                                }
+                                if ($typeFichier == "audio") {
+                                    echo '<form method="POST" action="#" > 
+                                    <div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
+                                        <div class="panel-thumbnail">
+                                            <audio controls="controls">
+                                                <source src"media/sounds/' . $var['nomMedia'] . '" type="audio/mp3" />
+                                            </audio> 
+                                        </div>
+                                        <div class="panel-body">   
+                                            <input type="submit" name="supprimer" value="Supprimer">  
+                                            <input type="hidden" name="idCommentaire" value="' . $var['Post_idPost'] . '">
+                                            <p class="lead"> ' . $var['commentaire'] . '</p>
+                                        </div>  
+                                    </div>     
+                                    </form>';
+                                }
+                            }
+                            ?>
                         </div>
                     </div>
                     <!--/row-->
-
                     <div class="row">
                         <div class="col-sm-6">
                             <a href="#">Twitter</a> <small class="text-muted">|</small> <a href="#">Facebook</a> <small class="text-muted">|</small> <a href="#">Google+</a>
                         </div>
                     </div>
-
                     <div class="row" id="footer">
                         <div class="col-sm-6">
 
@@ -138,25 +153,18 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
                             </p>
                         </div>
                     </div>
-
                     <hr>
-
                     <h4 class="text-center">
                         <a href="http://usebootstrap.com/theme/facebook" target="ext">Download this Template @Bootply</a>
                     </h4>
-
                     <hr>
-
                 </div>
                 <!-- /col-9 -->
             </div>
             <!-- /padding -->
         </div>
         <!-- /main -->
-
     </div>
-
-
     <!--post modal-->
     <div id="postModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">

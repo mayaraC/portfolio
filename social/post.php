@@ -4,68 +4,74 @@ session_start();
 $commentaire = filter_input(INPUT_POST, 'commentaire', FILTER_SANITIZE_STRING);
 $images = filter_input(INPUT_POST, 'img[]', FILTER_SANITIZE_STRING);
 $error = array();
-$_SESSION['typeFichier'] = "";
 if (isset($_POST['post']) == 'post') {
-    //Ajouter un commentaire
-    if (!empty($commentaire) && empty($path)) {
-        //$idPost = ajouterCommentaire($commentaire);
-        /* if ($idPost == false){
-          //RollBack(); //Annule toutes la transaction dans la base de données
-          } */
-    }
+    if ($commentaire = "" && $path="") {
+        $error['commentaireMediaVide'] = "Commentaire ou image obligatoire";
+    } else {
+        //Ajouter un commentaire
+        if ($commentaire !="" && $path =="") {
+            $idPost = ajouterCommentaire($commentaire);
+        }
 
-    //Ajouter des images
-    foreach ($_FILES['img']['name'] as $key => $value) {
-        //Savoir le type de fichier
-        $str = mime_content_type($_FILES['img']["tmp_name"][$key]);
-        $typeFichier = explode('/', $str)[0];
-        echo "a" . $str;
-        $path = $_FILES['img']['name'][$key]; //nom du fichier complet
-        $extension = pathinfo($path, PATHINFO_EXTENSION); //permet de découper la variable pour récupérer l'extension
-        
-
-        //Vérifier la taille de l'image
-        /*if ($_FILES['img']['size'][$key] > 24000000) {
-            $error['horsTaille'] = "Ce fichier dépasse la taille acceptée";
-            header('Location: post.php');
-        }*/
-
-        if ($typeFichier == "image") {
-            if ($extension == "png" or $extension == "PNG" or $extension == "jpg") {
-                $newName = uniqid().".".$extension;
-                $dossier = "media/images/" . $newName;
-
-                if ($commentaire == "") {
-                    $error['commentaireVide'] = "Commentaire obligatoire";
+        //Ajouter des images
+        foreach ($_FILES['img']['name'] as $key => $value) {
+            //Savoir le type de fichier
+            $str = mime_content_type($_FILES['img']["tmp_name"][$key]);
+            $typeFichier = explode('/', $str)[0];
+            echo $str;
+            $path = $_FILES['img']['name'][$key]; //nom du fichier complet
+            $extension = pathinfo($path, PATHINFO_EXTENSION); //permet de découper la variable pour récupérer l'extension
+            //Vérifier la taille de l'image
+            /* if ($_FILES['img']['size'][$key] > 24000000) {
+              $error['horsTaille'] = "Ce fichier dépasse la taille acceptée";
+              header('Location: post.php');
+              } */
+            if ($commentaire == "") {
+                $error['commentaireVide'] = "Commentaire obligatoire";
+            } else {
+                if ($typeFichier == "image") {
+                    if ($extension == "png" or $extension == "PNG" or $extension == "jpg") {
+                        $newName = uniqid() . "." . $extension;
+                        $dossier = "media/images/" . $newName;
+                        if (move_uploaded_file($_FILES['img']['tmp_name'][$key], $dossier . "")) {//Si la fonction renvoie TRUE, c'est que ça a fonctionné...
+                            echo 'Upload effectué avec succès !';
+                            ajouterMedia($typeFichier, $newName, $idPost);
+                            //header('Location: index.php');
+                            //exit;
+                        } else {
+                            $error['imgPasAJoute'] = "Ce fichier n'a pu être ajouté";
+                            echo 'Echec de l\'upload !</br';
+                            //header('Location: ../ajoutJeu.php?erreur=19');
+                            //exit;
+                        }
+                    }
                 } else {
-                    if (move_uploaded_file($_FILES['img']['tmp_name'][$key], $dossier . "")) {//Si la fonction renvoie TRUE, c'est que ça a fonctionné...
-                        echo 'Upload effectué avec succès !';
-                        //ajouterMedia($typeFichier, $newName, $idPost);
-                        //header('Location: index.php');
-                        //exit;
-
-                    } else {
-                        $error['imgPasAJoute'] = "Ce fichier n'a pu être ajouté";
-                        echo 'Echec de l\'upload !</br';
-                        //header('Location: ../ajoutJeu.php?erreur=19');
-                        //exit;
+                    $error['mauvaiseExtension'] = "Ce fichier n'est pas une image";
+                }
+                if ($typeFichier == "video") {
+                    $newName = uniqid() . "." . $extension;
+                    if ($extension == "mp4" or $extension == "mp3" or $extension == "wav") {
+                        $dossier = "media/videos/" . $newName;
+                        if (move_uploaded_file($_FILES['img']['tmp_name'][$key], $dossier . "")) {//Si la fonction renvoie TRUE, c'est que ça a fonctionné...
+                            echo 'Upload effectué avec succès !';
+                            ajouterMedia($typeFichier, $newName, $idPost);
+                        }
                     }
                 }
-            } else {
-                $error['mauvaiseExtension'] = "Ce fichier n'est pas une image";
-            }
-        } 
-        if ($typeFichier == "video") {
-            if ($extension == "mp4" or $extension == "mp3" or $extension == "wav") {
-                $dossier = "media/videos/" . $newName;
-                if (move_uploaded_file($_FILES['img']['tmp_name'][$key], $dossier . "")) {//Si la fonction renvoie TRUE, c'est que ça a fonctionné...
-                    echo 'Upload effectué avec succès !';
-                ajouterMedia($typeFichier, $newName, $idPost);
+                if ($typeFichier == "audio") {
+                    $newName = uniqid() . "." . $extension;
+                    if ($extension == "mp4" or $extension == "mp3" or $extension == "wav") {
+                        $dossier = "media/sounds/" . $newName;
+                        if (move_uploaded_file($_FILES['img']['tmp_name'][$key], $dossier . "")) {//Si la fonction renvoie TRUE, c'est que ça a fonctionné...
+                            echo 'Upload effectué avec succès !';
+                            ajouterMedia($typeFichier, $newName, $idPost);
+                        }
+                    }
                 }
             }
         }
-    }   
-}else {
+    }
+} else {
     echo "voifdho";
 }
 ?>
@@ -82,7 +88,7 @@ if (isset($_POST['post']) == 'post') {
     <body>
         <div class="wrapper">
             <div class="row row-offcanvas row-offcanvas-left">
-                <?php // include '../social/assets/include/nav.html';             ?>
+                <?php // include '../social/assets/include/nav.html';              ?>
                 <div id="main">
                     <div  class="container bootstrap snippet">
                         <div  class="row">
@@ -97,7 +103,7 @@ if (isset($_POST['post']) == 'post') {
                                         <ul class='list-inline post-actions'>
                                             <li>
                                                 <label for="img"> <img src="./assets/icon/iconmonstr-photo-camera-4.svg" alt="icon camera"> </label> 
-                                                <input type="file" accept="video/*" name="img[]" id="img" multiple>
+                                                <input type="file" accept="video/*, image/*, audio/*" name="img[]" id="img" multiple>
                                             </li>
                                             <li>
                                                 <a href="#" class='glyphicon glyphicon-user'></a>
