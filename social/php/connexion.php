@@ -5,6 +5,9 @@ define("DBUSER", "root");
 define("DBPWD", "root");
 
 function connexion() {
+   /*if(!isset($dbc)){
+      unset($dbc);
+    }*/
     static $dbc = null;
 
     // Première visite de la fonction

@@ -6,10 +6,9 @@ $images = filter_input(INPUT_POST, 'img[]', FILTER_SANITIZE_STRING);
 $error = array();
 $_SESSION['typeFichier'] = "";
 if (isset($_POST['post']) == 'post') {
-    //Start();
     //Ajouter un commentaire
     if (!empty($commentaire) && empty($path)) {
-        $idPost = ajouterCommentaire($commentaire);
+        //$idPost = ajouterCommentaire($commentaire);
         /* if ($idPost == false){
           //RollBack(); //Annule toutes la transaction dans la base de données
           } */
@@ -20,21 +19,21 @@ if (isset($_POST['post']) == 'post') {
         //Savoir le type de fichier
         $str = mime_content_type($_FILES['img']["tmp_name"][$key]);
         $typeFichier = explode('/', $str)[0];
-        $_SESSION['typeFichier'] =  $typeFichier;
+        echo "a" . $str;
         $path = $_FILES['img']['name'][$key]; //nom du fichier complet
         $extension = pathinfo($path, PATHINFO_EXTENSION); //permet de découper la variable pour récupérer l'extension
+        
 
         //Vérifier la taille de l'image
-        if ($_FILES['img']['size'][$key] > 24000000) {
-            //RollBack();
+        /*if ($_FILES['img']['size'][$key] > 24000000) {
             $error['horsTaille'] = "Ce fichier dépasse la taille acceptée";
             header('Location: post.php');
-        }
+        }*/
 
         if ($typeFichier == "image") {
             if ($extension == "png" or $extension == "PNG" or $extension == "jpg") {
+                $newName = uniqid().".".$extension;
                 $dossier = "media/images/" . $newName;
-                //ajouterMedia($extension, $newName ,  $idPost);
 
                 if ($commentaire == "") {
                     $error['commentaireVide'] = "Commentaire obligatoire";
@@ -42,12 +41,10 @@ if (isset($_POST['post']) == 'post') {
                     if (move_uploaded_file($_FILES['img']['tmp_name'][$key], $dossier . "")) {//Si la fonction renvoie TRUE, c'est que ça a fonctionné...
                         echo 'Upload effectué avec succès !';
                         //ajouterMedia($typeFichier, $newName, $idPost);
-                        //Commit();
                         //header('Location: index.php');
                         //exit;
 
                     } else {
-                        //RollBack();
                         $error['imgPasAJoute'] = "Ce fichier n'a pu être ajouté";
                         echo 'Echec de l\'upload !</br';
                         //header('Location: ../ajoutJeu.php?erreur=19');
@@ -56,7 +53,6 @@ if (isset($_POST['post']) == 'post') {
                 }
             } else {
                 $error['mauvaiseExtension'] = "Ce fichier n'est pas une image";
-            //RollBack();
             }
         } 
         if ($typeFichier == "video") {
@@ -68,7 +64,6 @@ if (isset($_POST['post']) == 'post') {
                 }
             }
         }
-        //Commit();
     }   
 }else {
     echo "voifdho";
@@ -102,9 +97,8 @@ if (isset($_POST['post']) == 'post') {
                                         <ul class='list-inline post-actions'>
                                             <li>
                                                 <label for="img"> <img src="./assets/icon/iconmonstr-photo-camera-4.svg" alt="icon camera"> </label> 
-                                                <input type="file" accept="image/*" name="img[]" id="img" multiple>
+                                                <input type="file" accept="video/*" name="img[]" id="img" multiple>
                                             </li>
-
                                             <li>
                                                 <a href="#" class='glyphicon glyphicon-user'></a>
                                             </li>

@@ -4,35 +4,53 @@ include 'connexion.php';
 
 //Ajouter des medias et des commentaires --------------------------------------------------------------------------------------
 function ajouterMedia($typeMedia, $nomMedia, $post_idPost) {
-    //Requête
-    $sql = "INSERT INTO `media`(`typeMedia`, `nomMedia`, `creationDate`, `modificationDate`,`post_idPost`) VALUES (:typeMedia, :nomMedia, NOW(), NOW(),:post_idPost)";
+  
+  //Requête
+  $sql = "INSERT INTO `media`(`typeMedia`, `nomMedia`, `creationDate`, `modificationDate`,`post_idPost`) VALUES (:typeMedia, :nomMedia, NOW(), NOW(),:post_idPost)";
 
+  try {
+    $dbh = connexion();
+    $dbh->beginTransaction();
     //Envoyer la requête à la base de données
-    $query = connexion()->prepare($sql);
+    $query = $dbh->prepare($sql);
 
     // Exécuter la requete en donnant les infos
-    return $query->execute([
-                ':typeMedia' => "png",
+    $query->execute([
+                ':typeMedia' => $typeMedia,
                 ':nomMedia' => $nomMedia,
                 ':post_idPost' => $post_idPost
     ]);
+    
+    $dbh->commit();
+    return true;
+    
+  } catch (PDOException $th) {
+    echo $th->getMessage();
+    $dbh->rollBack();
+  }    
 }
 
 function ajouterCommentaire($commentaire) {
+  
   //Requête
   $sql = "INSERT INTO `post`(`commentaire`, `creationDate`) VALUES (:commentaire, NOW())";
 
-  //Envoyer la requête à la base de données
-  $query = connexion()->prepare($sql);
+  try {
+    $dbh = connexion();
+    $dbh->beginTransaction();
+    //Envoyer la requête à la base de données
+    $query = $dbh->prepare($sql);
 
-  // Exécuter la requete en donnant les infos
-  $result = $query->execute([':commentaire' => $commentaire
-  ]);
+    // Exécuter la requete en donnant les infos
+    $query->execute([':commentaire' => $commentaire ]);
+    $tmp = $dbh->lastInsertId();
+    $dbh->commit(); 
+    return $tmp;
+  } catch (PDOException $th) {
+    echo $th->getMessage();
+    $dbh->rollBack();
+  }
   
-  if ($result == false){
-    return false;
-  }else
-    return connexion()->lastInsertId();
 }
 //Afficher des images et des commentaires --------------------------------------------------------------------------------------
 function afficherCommentaire() {
@@ -46,7 +64,7 @@ function afficherCommentaire() {
 }
 function afficherImagesEtCommentaire() {
   //Requête
-  $reponse = connexion()->query("SELECT nomMedia, commentaire, media.creationDate, Post_idPost from media, post where post.idPost = media.Post_idPost ORDER BY media.creationDate DESC");
+  $reponse = connexion()->query("SELECT nomMedia, typeMedia, commentaire, media.creationDate, Post_idPost from media, post where post.idPost = media.Post_idPost ORDER BY media.creationDate DESC");
 
   //Envoyer la requête à la base de données
   $res = $reponse->fetchAll();
@@ -55,7 +73,7 @@ function afficherImagesEtCommentaire() {
 }
 function afficherImagesOuCommentaire() {
   //Requête
-  $reponse = connexion()->query("SELECT distinct commentaire from media, post where post.idPost != media.Post_idPost ");
+  $reponse = connexion()->query("SELECT distinct idPost , typeMedia, commentaire from media, post where post.idPost != media.Post_idPost ");
 
   //Envoyer la requête à la base de données
   $res = $reponse->fetchAll();
@@ -65,41 +83,39 @@ function afficherImagesOuCommentaire() {
 
 //Supprimer des images et des commentaires --------------------------------------------------------------------------------------
 function effacerMediaCommenatire($id) {
-  //Start();
   //Requête
   $sql = "DELETE FROM `media` WHERE  Post_idPost = :id";
-  
-
-  //Envoyer la requête à la base de données
-  $query = connexion()->prepare($sql);
-
-  // Exécuter la requete en donnant les infos
-  $query->bindparam(':id', $id, PDO::PARAM_INT);
- 
-  if($query->execute() == true){
-    //Requête
-   $sql = "DELETE FROM `post` WHERE  idPost = :id";
-  
+  try{
+    $dbh = connexion();
+    $dbh->beginTransaction();
 
     //Envoyer la requête à la base de données
     $query = connexion()->prepare($sql);
 
     // Exécuter la requete en donnant les infos
     $query->bindparam(':id', $id, PDO::PARAM_INT);
-    //Commit();
-    return $query->execute() ;
- }
- //RollBack();
+
+    if($query->execute() == true){
+      //Requête
+     $sql = "DELETE FROM `post` WHERE  idPost = :id";
+    
+  
+      //Envoyer la requête à la base de données
+      $query = connexion()->prepare($sql);
+  
+      // Exécuter la requete en donnant les infos
+      $query->bindparam(':id', $id, PDO::PARAM_INT);
+      
+      $query->execute() ;
+      $dbh->commit();
+      return true;
+   }
+
+  } catch(PDOException $th){
+    echo $th->getMessage();
+    $dbh->rollback();
+  }
+
  return false;
-}
-//Transaction----------------
-function Start(){
-  $dbh->beginTransaction();
-}
-function Commit(){
-  $dbh->Commit();
-}
-function RollBack(){
-  $dbh->rollBack();
 }
 ?>

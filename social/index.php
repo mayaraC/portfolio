@@ -1,7 +1,7 @@
 <?php
 include 'php/upload.php';
 session_start();
-$typeFichier = $_SESSION['typeFichier'];
+
 
 $idCommentaire = filter_input(INPUT_POST, 'idCommentaire', FILTER_SANITIZE_STRING);
 
@@ -80,7 +80,7 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
                                 </div>
                             </div>
                             <?php
-                            $arrayComt = afficherCommentaire();
+                            $arrayComt = afficherImagesOuCommentaire();
                             foreach ($arrayComt as $commentaire) {
 
                                 echo'<form method="POST" action="#" ><div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
@@ -92,9 +92,12 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
                                   </div>
                                   </div></form>';
                             }
+
                             $img = afficherImagesEtCommentaire();
                             foreach ($img as $var) {
+                                $typeFichier = $var['typeMedia'];
                                 if ($typeFichier == "image"){
+                                    
                                 echo '<form method="POST" action="#" > <div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
                                     <div class="panel-thumbnail"><img src="media/images/' . $var['nomMedia'] . '"class="img-responsive" style=" width:auto; height:auto"></div>
                                     <div class="panel-body"> 
@@ -103,7 +106,7 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
                                         <p class="lead"> ' . $var['commentaire'] . '</p>
                                     </div>
                                 </div></form>';
-                            }
+                            
                             if ($typeFichier == "video"){
                                 echo '<form method="POST" action="#" > <div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
                                 <video controls width="250">
@@ -112,6 +115,7 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
                                 </form>';
                             }
                         }
+                    }
                             ?>
 
                         </div>
