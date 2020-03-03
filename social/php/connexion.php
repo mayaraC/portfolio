@@ -1,13 +1,13 @@
 <?php
+/********************************************
+ * Connexion à la base de données
+ *******************************************/
 define("HOST", "localhost");
 define("DBNAME", "portefolio_db");
 define("DBUSER", "root");
 define("DBPWD", "root");
 
 function connexion() {
-   /*if(!isset($dbc)){
-      unset($dbc);
-    }*/
     static $dbc = null;
 
     // Première visite de la fonction

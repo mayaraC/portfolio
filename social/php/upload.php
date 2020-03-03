@@ -1,4 +1,7 @@
 <?php 
+/********************************************
+ * Uploader des images, vidéos, audios et commentaire dans la base de données
+ *******************************************/
 include 'connexion.php';
 
 
@@ -73,7 +76,7 @@ function afficherImagesEtCommentaire() {
 }
 function afficherImagesOuCommentaire() {
   //Requête
-  $reponse = connexion()->query("SELECT distinct idPost , typeMedia, commentaire from media, post where post.idPost != media.Post_idPost ");
+  $reponse = connexion()->query("SELECT  idPost, commentaire from post where NOT EXISTS (SELECT media.post_idPost, media.creationDate FROM media WHERE post.idPost = media.post_idPost ORDER BY media.creationDate DESC) ");
 
   //Envoyer la requête à la base de données
   $res = $reponse->fetchAll();
@@ -82,7 +85,46 @@ function afficherImagesOuCommentaire() {
 }
 
 //Supprimer des images et des commentaires --------------------------------------------------------------------------------------
-function effacerMediaCommenatire($id) {
+function effacerMediaCommenatire($id, $dossier, $nomMedia) {
+  //Requête
+  $sql = "DELETE FROM `media` WHERE  Post_idPost = :id";
+  try{
+    $dbh = connexion();
+    $dbh->beginTransaction();
+
+    //Envoyer la requête à la base de données
+    $query = connexion()->prepare($sql);
+
+    // Exécuter la requete en donnant les infos
+    $query->bindparam(':id', $id, PDO::PARAM_INT);
+
+    if($query->execute() == true){
+      //Requête
+     $sql = "DELETE FROM `post` WHERE  idPost = :id";
+    
+  
+      //Envoyer la requête à la base de données
+      $query = connexion()->prepare($sql);
+  
+      // Exécuter la requete en donnant les infos
+      $query->bindparam(':id', $id, PDO::PARAM_INT);
+      
+      $query->execute() ;
+      
+      $dbh->commit();
+      unlink($dossier.$nomMedia);
+      return true;
+   }
+
+  } catch(PDOException $th){
+    echo $th->getMessage();
+    $dbh->rollback();
+  }
+
+ return false;
+}
+//Modifier des images et des commentaires --------------------------------------------------------------------------------------
+function modifierMediaCommenatire($id) {
   //Requête
   $sql = "DELETE FROM `media` WHERE  Post_idPost = :id";
   try{
@@ -108,6 +150,7 @@ function effacerMediaCommenatire($id) {
       
       $query->execute() ;
       $dbh->commit();
+
       return true;
    }
 
@@ -118,4 +161,3 @@ function effacerMediaCommenatire($id) {
 
  return false;
 }
-?>
