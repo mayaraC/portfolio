@@ -19,6 +19,7 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
     <link href="assets/css/facebook.css" rel="stylesheet">
 </head>
 <body>
+coucou
     <div class="wrapper">
         <div class="row row-offcanvas row-offcanvas-left">
             <?php //include '../social/assets/include/nav.html'; ?>
