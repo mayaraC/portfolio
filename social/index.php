@@ -43,7 +43,7 @@ $nouveauCommentaire = filter_input(INPUT_POST, 'nouveauCommentaire', FILTER_SANI
                             </div>
                             <?php
                             //Afficher les commentaires et les medias
-                            /* $arrayComt = afficherImagesOuCommentaire();
+                            $arrayComt = afficherImagesOuCommentaire();
                               foreach ($arrayComt as $commentaire) {
                               echo'<form method="POST" action="#" ><div class="panel panel-default" style="  height:auto;  width: 70%; text-align: center" >
                               <div class="panel-thumbnail"></div>
@@ -69,7 +69,7 @@ $nouveauCommentaire = filter_input(INPUT_POST, 'nouveauCommentaire', FILTER_SANI
                               echo "Commentaire modifié, actualiser la page";
                               }
                               }
-                              } */
+                              } 
                             $img = afficherImagesEtCommentaire();
                             foreach ($img as $var) {
                                 $typeFichier = $var['typeMedia'];
