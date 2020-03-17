@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 /********************************************
  * Uploader des images, vidéos, audios et commentaire dans la base de données
  *******************************************/
@@ -6,8 +7,9 @@ include 'connexion.php';
 
 
 //Ajouter des medias et des commentaires --------------------------------------------------------------------------------------
-function ajouterMedia($typeMedia, $nomMedia, $post_idPost) {
-  
+function ajouterMedia($typeMedia, $nomMedia, $post_idPost)
+{
+
   //Requête
   $sql = "INSERT INTO `media`(`typeMedia`, `nomMedia`, `creationDate`, `modificationDate`,`post_idPost`) VALUES (:typeMedia, :nomMedia, NOW(), NOW(),:post_idPost)";
 
@@ -19,22 +21,22 @@ function ajouterMedia($typeMedia, $nomMedia, $post_idPost) {
 
     // Exécuter la requete en donnant les infos
     $query->execute([
-                ':typeMedia' => $typeMedia,
-                ':nomMedia' => $nomMedia,
-                ':post_idPost' => $post_idPost
+      ':typeMedia' => $typeMedia,
+      ':nomMedia' => $nomMedia,
+      ':post_idPost' => $post_idPost
     ]);
-    
+
     $dbh->commit();
     return true;
-    
   } catch (PDOException $th) {
     echo $th->getMessage();
     $dbh->rollBack();
-  }    
+  }
 }
 
-function ajouterCommentaire($commentaire) {
-  
+function ajouterCommentaire($commentaire)
+{
+
   //Requête
   $sql = "INSERT INTO `post`(`commentaire`, `creationDate`) VALUES (:commentaire, NOW())";
 
@@ -45,18 +47,18 @@ function ajouterCommentaire($commentaire) {
     $query = $dbh->prepare($sql);
 
     // Exécuter la requete en donnant les infos
-    $query->execute([':commentaire' => $commentaire ]);
+    $query->execute([':commentaire' => $commentaire]);
     $tmp = $dbh->lastInsertId();
-    $dbh->commit(); 
+    $dbh->commit();
     return $tmp;
   } catch (PDOException $th) {
     echo $th->getMessage();
     $dbh->rollBack();
   }
-  
 }
 //Afficher des images et des commentaires --------------------------------------------------------------------------------------
-function afficherCommentaire() {
+function afficherCommentaire()
+{
   //Requête
   $reponse = connexion()->query("SELECT `idPost`, `commentaire`, `creationDate`, `modificationDate` FROM `post` ORDER BY creationDate DESC");
 
@@ -65,7 +67,8 @@ function afficherCommentaire() {
 
   return $res;
 }
-function afficherImagesEtCommentaire() {
+function afficherImagesEtCommentaire()
+{
   //Requête
   $reponse = connexion()->query("SELECT nomMedia, typeMedia, commentaire, media.creationDate, Post_idPost from media, post where post.idPost = media.Post_idPost ORDER BY media.creationDate DESC");
 
@@ -74,7 +77,8 @@ function afficherImagesEtCommentaire() {
 
   return $res;
 }
-function afficherImagesOuCommentaire() {
+function afficherImagesOuCommentaire()
+{
   //Requête
   $reponse = connexion()->query("SELECT  idPost, commentaire from post where NOT EXISTS (SELECT media.post_idPost, media.creationDate FROM media WHERE post.idPost = media.post_idPost ORDER BY media.creationDate DESC) ");
 
@@ -85,10 +89,11 @@ function afficherImagesOuCommentaire() {
 }
 
 //Supprimer des images et des commentaires --------------------------------------------------------------------------------------
-function effacerMediaCommenatire($id, $dossier, $nomMedia) {
+function effacerMediaCommenatire($id, $dossier, $nomMedia)
+{
   //Requête
   $sql = "DELETE FROM `media` WHERE  Post_idPost = :id";
-  try{
+  try {
     $dbh = connexion();
     $dbh->beginTransaction();
 
@@ -98,36 +103,36 @@ function effacerMediaCommenatire($id, $dossier, $nomMedia) {
     // Exécuter la requete en donnant les infos
     $query->bindparam(':id', $id, PDO::PARAM_INT);
 
-    if($query->execute() == true){
+    if ($query->execute() == true) {
       //Requête
-     $sql = "DELETE FROM `post` WHERE  idPost = :id";
-    
-  
+      $sql = "DELETE FROM `post` WHERE  idPost = :id";
+
+
       //Envoyer la requête à la base de données
       $query = connexion()->prepare($sql);
-  
+
       // Exécuter la requete en donnant les infos
       $query->bindparam(':id', $id, PDO::PARAM_INT);
-      
-      $query->execute() ;
-      
-      $dbh->commit();
-      unlink($dossier.$nomMedia);
-      return true;
-   }
 
-  } catch(PDOException $th){
+      $query->execute();
+
+      $dbh->commit();
+      unlink($dossier . $nomMedia);
+      return true;
+    }
+  } catch (PDOException $th) {
     echo $th->getMessage();
     $dbh->rollback();
   }
 
- return false;
+  return false;
 }
 //Modifier des images et des commentaires --------------------------------------------------------------------------------------
-function modifierMediaCommenatire($id) {
+function modifierMediaCommenatire($typeFichier, $id, $commentaire)
+{
   //Requête
-  $sql = "DELETE FROM `media` WHERE  Post_idPost = :id";
-  try{
+  $sql = "UPDATE `post` SET `commentaire`=:commentaire, `modificationDate`=NOW() WHERE `idPost`=:id";
+  try {
     $dbh = connexion();
     $dbh->beginTransaction();
 
@@ -136,28 +141,50 @@ function modifierMediaCommenatire($id) {
 
     // Exécuter la requete en donnant les infos
     $query->bindparam(':id', $id, PDO::PARAM_INT);
+    $query->bindparam(':commentaire', $commentaire, PDO::PARAM_STR);
 
-    if($query->execute() == true){
-      //Requête
-     $sql = "DELETE FROM `post` WHERE  idPost = :id";
-    
-  
+    if ($query->execute() == true) {
+
+      $sql = "UPDATE media SET typeMedia=:typeFichier, modificationDate=NOW() WHERE Post_idPost=:id";
+
       //Envoyer la requête à la base de données
       $query = connexion()->prepare($sql);
-  
+
       // Exécuter la requete en donnant les infos
       $query->bindparam(':id', $id, PDO::PARAM_INT);
-      
-      $query->execute() ;
+      $query->bindparam(':typeFichier', $typeFichier, PDO::PARAM_STR);
+      $query->execute();
       $dbh->commit();
 
       return true;
-   }
+    }
+  } catch (PDOException $th) {
+    echo $th->getMessage();
+    //$dbh->rollback();
+    return false;
+  }
+}
+function modifierCommenatire($commentaire, $id)
+{
+  //Requête
+  $sql = "UPDATE `post` SET `commentaire`=:commentaire, `modificationDate`=NOW() WHERE `idPost`=:id";
+  try {
+    $dbh = connexion();
+    $dbh->beginTransaction();
 
-  } catch(PDOException $th){
+    //Envoyer la requête à la base de données
+    $query = connexion()->prepare($sql);
+
+    // Exécuter la requete en donnant les infos
+    $query->bindparam(':id', $id, PDO::PARAM_INT);
+    $query->bindparam(':commentaire', $commentaire, PDO::PARAM_STR);
+    $query->execute();
+    $dbh->commit();
+
+    return true;
+  } catch (PDOException $th) {
     echo $th->getMessage();
     $dbh->rollback();
+    return false;
   }
-
- return false;
 }

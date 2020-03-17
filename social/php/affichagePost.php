@@ -11,8 +11,5 @@ if (isset($_POST['supprimer']) == 'Supprimer') {
         effacerMediaCommenatire($idCommentaire, $dossier, $nomMedia);
     }else
         effacerMediaCommenatire($idCommentaire, $dossier, $nomMedia);
-  }
-if (isset($_POST['modifier']) == 'Modifier') {
-    modifierMediaCommenatire($id);
 }
 ?>

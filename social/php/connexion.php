@@ -5,7 +5,7 @@
 define("HOST", "localhost");
 define("DBNAME", "portefolio_db");
 define("DBUSER", "root");
-define("DBPWD", "root");
+define("DBPWD", "Super");
 
 function connexion() {
     static $dbc = null;
